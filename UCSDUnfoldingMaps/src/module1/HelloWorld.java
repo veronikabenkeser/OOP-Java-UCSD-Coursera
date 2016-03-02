@@ -43,7 +43,6 @@ public class HelloWorld extends PApplet
 		                      // You'll learn more about processing in Module 3
 
 		// This sets the background color for the Applet.  
-		// Play around with these numbers and see what happens!
 		this.background(0, 0, 128);
 		
 		// Select a map provider

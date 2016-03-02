@@ -24,12 +24,12 @@ import parsing.ParseFeed;
 /** EarthquakeCityMap
  * An application with an interactive map displaying earthquake data.
  * Author: UC San Diego Intermediate Software Development MOOC team
- * @author Your name here
- * Date: July 17, 2015
+ * @author Veronika Benkeser
+ * Date: March 1, 2016
  * */
 public class EarthquakeCityMap extends PApplet {
 
-	// You can ignore this.  It's to keep eclipse from generating a warning.
+	// To keep eclipse from generating a warning.
 	private static final long serialVersionUID = 1L;
 
 	// IF YOU ARE WORKING OFFLINE, change the value of this variable to true
@@ -37,14 +37,22 @@ public class EarthquakeCityMap extends PApplet {
 	
 	// Less than this threshold is a light earthquake
 	public static final float THRESHOLD_MODERATE = 5;
+	
 	// Less than this threshold is a minor earthquake
 	public static final float THRESHOLD_LIGHT = 4;
+	
+	private final int[] colors ={color(0,0,255),color(255,255,0),color(255,0,0)};
+	private final int[] radii ={6,9,12};
+	private final String[] descriptions = {"Below 4.0","4.0+ Magnitude","5.0+ Magnitude"};
 
 	/** This is where to find the local tiles, for working without an Internet connection */
 	public static String mbTilesString = "blankLight-1-3.mbtiles";
 	
 	// The map
 	private UnfoldingMap map;
+	
+	//Markers
+	private List<Marker> markers;
 	
 	//feed with magnitude 2.5+ Earthquakes
 	private String earthquakesURL = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.atom";
@@ -67,7 +75,7 @@ public class EarthquakeCityMap extends PApplet {
 	    MapUtils.createDefaultEventDispatcher(this, map);	
 			
 	    // The List you will populate with new SimplePointMarkers
-	    List<Marker> markers = new ArrayList<Marker>();
+	    markers = new ArrayList<Marker>();
 
 	    //Use provided parser to collect properties for each earthquake
 	    //PointFeatures have a getLocation method
@@ -76,27 +84,46 @@ public class EarthquakeCityMap extends PApplet {
 	    // These print statements show you (1) all of the relevant properties 
 	    // in the features, and (2) how to get one property and use it
 	    if (earthquakes.size() > 0) {
-	    	PointFeature f = earthquakes.get(0);
-	    	System.out.println(f.getProperties());
-	    	Object magObj = f.getProperty("magnitude");
-	    	float mag = Float.parseFloat(magObj.toString());
-	    	// PointFeatures also have a getLocation method
+//	    	PointFeature f = earthquakes.get(0);
+//	    	System.out.println(f.getProperties());
+	    	for(PointFeature pf: earthquakes){
+	    		markers.add(createMarker(pf));
+	    	}
+	    	drawMarkedMap(markers, map);
 	    }
-	    
-	    // Here is an example of how to use Processing's color method to generate 
-	    // an int that represents the color yellow.  
-	    int yellow = color(255, 255, 0);
-	    
-	    //TODO: Add code here as appropriate
 	}
 		
-	// A suggested helper method that takes in an earthquake feature and 
+	// Helper method that takes in an earthquake feature and 
 	// returns a SimplePointMarker for that earthquake
-	// TODO: Implement this method and call it from setUp, if it helps
 	private SimplePointMarker createMarker(PointFeature feature)
 	{
+		int col;
+		int radius;
 		// finish implementing and use this method, if it helps.
-		return new SimplePointMarker(feature.getLocation());
+		SimplePointMarker marker =  new SimplePointMarker(feature.getLocation());
+		Object magObj = feature.getProperty("magnitude");
+		float mag = Float.parseFloat(magObj.toString());
+		
+		if(mag<4.0){
+			col=colors[0];
+			radius=radii[0];
+		}else if(mag>=4.0 && mag<=4.9){
+			col=colors[1];
+			radius=radii[1];
+		} else {
+			col = colors[2];
+			radius=radii[2];
+		}
+		
+		marker.setColor(col);
+		marker.setStrokeColor(col);
+		marker.setRadius(radius);
+		
+		return marker;
+	}
+	
+	private void drawMarkedMap(List<Marker> markers,  UnfoldingMap map){
+		map.addMarkers(markers);
 	}
 	
 	public void draw() {
@@ -107,10 +134,16 @@ public class EarthquakeCityMap extends PApplet {
 
 
 	// helper method to draw key in GUI
-	// TODO: Implement this method to draw the key
-	private void addKey() 
-	{	
-		// Remember you can use Processing's graphics methods here
-	
+	private void addKey() {	
+		fill(250);
+		rect(15,50,170,140,7);
+		float yCoord=80;
+		for(int i=colors.length-1;i>=0;i--){
+			fill(colors[i]);
+			ellipse(40,yCoord,radii[i]*2,radii[i]*2);
+			fill(0);
+			text(descriptions[i],75,yCoord+4);
+			yCoord+=30+radii[i];
+		}
 	}
 }
