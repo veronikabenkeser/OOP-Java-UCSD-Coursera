@@ -21,7 +21,6 @@ public class LandQuakeMarker extends EarthquakeMarker {
 		isOnLand = true;
 	}
 
-
 	@Override
 	public void drawEarthquake(PGraphics pg, float x, float y) {
 		// Draws a centered circle for land quakes
@@ -32,9 +31,5 @@ public class LandQuakeMarker extends EarthquakeMarker {
 	// Get the country the earthquake is in
 	public String getCountry() {
 		return (String) getProperty("country");
-	}
-
-
-
-		
+	}		
 }

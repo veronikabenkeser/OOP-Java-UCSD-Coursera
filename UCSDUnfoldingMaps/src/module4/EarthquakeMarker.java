@@ -77,7 +77,7 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	private void colorDetermine(PGraphics pg) {
 
 		float depth = getDepth();
-		if(depth<THRESHOLD_LIGHT){
+		if(depth<THRESHOLD_INTERMEDIATE){
 			pg.fill(255,255,0);
 		} else if (depth>=THRESHOLD_INTERMEDIATE && depth<THRESHOLD_DEEP){
 			pg.fill(0,0,255);
@@ -110,7 +110,5 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	public boolean isOnLand()
 	{
 		return isOnLand;
-	}
-	
-	
+	}	
 }
