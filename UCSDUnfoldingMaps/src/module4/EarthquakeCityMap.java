@@ -1,6 +1,7 @@
 package module4;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.fhpotsdam.unfolding.UnfoldingMap;
@@ -20,8 +21,8 @@ import processing.core.PApplet;
 /** EarthquakeCityMap
  * An application with an interactive map displaying earthquake data.
  * Author: UC San Diego Intermediate Software Development MOOC team
- * @author Your name here
- * Date: July 17, 2015
+ * @author Veronika Benkeser
+ * Date: March 3, 2016
  * */
 public class EarthquakeCityMap extends PApplet {
 	
@@ -76,8 +77,8 @@ public class EarthquakeCityMap extends PApplet {
 		
 		// FOR TESTING: Set earthquakesURL to be one of the testing files by uncommenting
 		// one of the lines below.  This will work whether you are online or offline
-		//earthquakesURL = "test1.atom";
-		//earthquakesURL = "test2.atom";
+//		earthquakesURL = "test1.atom";
+		earthquakesURL = "test2.atom";
 		
 		// WHEN TAKING THIS QUIZ: Uncomment the next line
 		//earthquakesURL = "quiz1.atom";
@@ -140,18 +141,32 @@ public class EarthquakeCityMap extends PApplet {
 		textAlign(LEFT, CENTER);
 		textSize(12);
 		text("Earthquake Key", 50, 75);
-		
-		fill(color(255, 0, 0));
-		ellipse(50, 125, 15, 15);
-		fill(color(255, 255, 0));
-		ellipse(50, 175, 10, 10);
-		fill(color(0, 0, 255));
-		ellipse(50, 225, 5, 5);
+
+		fill(214,54,83);
+		triangle(45, 100, 50, 90, 55, 100);
+		fill(255, 255, 255);
+		ellipse(50,115,10,10);
+		rect(45, 128, 10, 10);
+		fill(255,255,0);
+		ellipse(50,177,10,10);
+		fill(0,0,255);
+		ellipse(50,195,10,10);
+		fill(255,0,0);
+		ellipse(50,213,10,10);
+		fill(255,255,255);
+		ellipse(50,230,10,10);
+		line(44,225,56,235);
+		line(56,225,44,235);
 		
 		fill(0, 0, 0);
-		text("5.0+ Magnitude", 75, 125);
-		text("4.0+ Magnitude", 75, 175);
-		text("Below 4.0", 75, 225);
+		text("City Marker", 75, 95);
+		text("Land Quake", 75, 114);
+		text("Ocean Quake",75, 132);
+		text("Size ~ Magnitude", 60, 153);
+		text("Shallow", 75, 175);
+		text("Intermidiate", 75, 194);
+		text("Deep", 75, 211);
+		text("Past hour", 75, 228);
 	}
 
 	
@@ -162,11 +177,11 @@ public class EarthquakeCityMap extends PApplet {
 	// set this "country" property already.  Otherwise it returns false.
 	private boolean isLand(PointFeature earthquake) {
 		
-		// IMPLEMENT THIS: loop over all countries to check if location is in any of them
-		
-		// TODO: Implement this method using the helper method isInCountry
-		
-		// not inside any country
+		for(Marker country :countryMarkers){
+			if(isInCountry(earthquake, country)){
+				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -175,13 +190,34 @@ public class EarthquakeCityMap extends PApplet {
 	// (either will work) and then for each country, loop through
 	// the quakes to count how many occurred in that country.
 	// Recall that the country markers have a "name" property, 
-	// And LandQuakeMarkers have a "country" property set.
+	// And LandQuakeMarkers have a "country" property set. 
+	
 	private void printQuakes() 
 	{
-		// TODO: Implement this method
+		int oceanQuakesCount=0;
+		for(Marker earthquake: quakeMarkers){
+			//If occurred in the ocean 
+			if(earthquake.getProperty("country") == null){
+				oceanQuakesCount++;
+			//If occurred on land
+			} else {
+				countQuakesOnLand(earthquake.getProperty("country").toString());
+			}
+		}
+		for(String key: hm.keySet()){
+			System.out.println(key + " : "+hm.get(key));
+		}
+		
+		System.out.println("OCEAN QUAKES: "+ oceanQuakesCount);
 	}
 	
-	
+	private void countQuakesOnLand(String country){
+		if(!hm.containsKey(country)){
+			hm.put(country, 1);
+		} else {
+			hm.put(country, hm.get(country)+1);
+		}
+	}
 	
 	// helper method to test whether a given earthquake is in a given country
 	// This will also add the country property to the properties of the earthquake 
@@ -216,5 +252,5 @@ public class EarthquakeCityMap extends PApplet {
 		}
 		return false;
 	}
-
+	HashMap <String, Integer> hm = new HashMap<String, Integer>();
 }
