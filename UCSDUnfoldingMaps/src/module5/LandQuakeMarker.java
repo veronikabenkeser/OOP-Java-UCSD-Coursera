@@ -1,12 +1,13 @@
 package module5;
 
 import de.fhpotsdam.unfolding.data.PointFeature;
+import de.fhpotsdam.unfolding.utils.ScreenPosition;
 import processing.core.PGraphics;
 
 /** Implements a visual marker for land earthquakes on an earthquake map
  * 
  * @author UC San Diego Intermediate Software Development MOOC team
- * @author Your name here
+ * @author Veronika Benkeser
  *
  */
 public class LandQuakeMarker extends EarthquakeMarker {
@@ -33,6 +34,27 @@ public class LandQuakeMarker extends EarthquakeMarker {
 	// Get the country the earthquake is in
 	public String getCountry() {
 		return (String) getProperty("country");
+	}
+
+
+	@Override
+	public void dontShowConnectingLines(PGraphics pg, float x, float y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void showConnectingLines(PGraphics pg, float x, float y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void showConnectingLinesFromCity(PGraphics pg, float x, float y, float x2, float y2) {
+		// TODO Auto-generated method stub
+		
 	}
 
 		
