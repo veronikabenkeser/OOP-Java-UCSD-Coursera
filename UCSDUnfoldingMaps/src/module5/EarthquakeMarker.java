@@ -21,7 +21,6 @@ public abstract class EarthquakeMarker extends CommonMarker
 	// based on magnitude. 
 	protected float radius;
 	
-	
 	// constants for distance
 	protected static final float kmPerMile = 1.6f;
 	
@@ -34,13 +33,9 @@ public abstract class EarthquakeMarker extends CommonMarker
 	public static final float THRESHOLD_INTERMEDIATE = 70;
 	/** Greater than or equal to this threshold is a deep depth */
 	public static final float THRESHOLD_DEEP = 300;
-
-	// ADD constants for colors if you want
-
 	
 	// abstract method implemented in derived classes
-	public abstract void drawEarthquake(PGraphics pg, float x, float y);
-		
+	public abstract void drawEarthquake(PGraphics pg, float x, float y);	
 	
 	// constructor
 	public EarthquakeMarker (PointFeature feature) 
@@ -85,8 +80,7 @@ public abstract class EarthquakeMarker extends CommonMarker
 		}
 		
 		// reset to previous styling
-		pg.popStyle();
-		
+		pg.popStyle();	
 	}
 
 	/** Show the title of the earthquake if this marker is selected */
@@ -96,7 +90,6 @@ public abstract class EarthquakeMarker extends CommonMarker
 		pg.fill(0);
 		pg.text(getTitle(), x, y);	
 	}
-
 	
 	/**
 	 * Return the "threat circle" radius, or distance up to 
@@ -126,7 +119,6 @@ public abstract class EarthquakeMarker extends CommonMarker
 			pg.fill(255, 0, 0);
 		}
 	}
-	
 	
 	/*
 	 * getters for earthquake properties

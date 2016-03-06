@@ -23,7 +23,6 @@ public class CityMarker extends CommonMarker{
 		super(location);
 	}
 	
-	
 	public CityMarker(Feature city) {
 		super(((PointFeature)city).getLocation(), city.getProperties());
 		// Cities have properties: "name" (city name), "country" (country name)
@@ -65,27 +64,5 @@ public class CityMarker extends CommonMarker{
 		String cityText  = getCity()+", " + getCountry()+ "\nPop: "+getPopulation()+"Million";
 		pg.fill(0);
 		pg.text(cityText, x, y);	
-	}
-
-	@Override
-	public void dontShowConnectingLines(PGraphics pg, float x, float y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void showConnectingLines(PGraphics pg, float x, float y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void showConnectingLinesFromCity(PGraphics pg, float x, float y, float x2, float y2) {
-		pg.fill(0);
-		System.out.println("want to draw a line2");
-		pg.line(x, y,x2,y2);
-		
 	}
 }

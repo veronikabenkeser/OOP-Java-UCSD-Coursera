@@ -12,7 +12,6 @@ import processing.core.PGraphics;
  */
 public class LandQuakeMarker extends EarthquakeMarker {
 	
-	
 	public LandQuakeMarker(PointFeature quake) {
 		
 		// calling EarthquakeMarker constructor
@@ -22,7 +21,6 @@ public class LandQuakeMarker extends EarthquakeMarker {
 		isOnLand = true;
 	}
 
-
 	/** Draw the earthquake as an ellipse */
 	@Override
 	public void drawEarthquake(PGraphics pg, float x, float y) {
@@ -30,32 +28,8 @@ public class LandQuakeMarker extends EarthquakeMarker {
 		
 	}
 	
-
 	// Get the country the earthquake is in
 	public String getCountry() {
 		return (String) getProperty("country");
 	}
-
-
-	@Override
-	public void dontShowConnectingLines(PGraphics pg, float x, float y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void showConnectingLines(PGraphics pg, float x, float y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void showConnectingLinesFromCity(PGraphics pg, float x, float y, float x2, float y2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-		
 }

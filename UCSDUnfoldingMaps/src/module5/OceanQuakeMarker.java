@@ -1,5 +1,7 @@
 package module5;
 
+import java.util.List;
+
 import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.utils.ScreenPosition;
@@ -13,6 +15,8 @@ import processing.core.PGraphics;
  */
 public class OceanQuakeMarker extends EarthquakeMarker {
 	
+	private List<ScreenPosition> affectedLocations;
+
 	public OceanQuakeMarker(PointFeature quake) {
 		super(quake);
 		
@@ -20,34 +24,17 @@ public class OceanQuakeMarker extends EarthquakeMarker {
 		isOnLand = false;
 	}
 	
-
 	/** Draw the earthquake as a square */
 	@Override
 	public void drawEarthquake(PGraphics pg, float x, float y) {
 		pg.rect(x-radius, y-radius, 2*radius, 2*radius);
 		
+		//If an ocean earthquake is clicked, lines are drawn to all the cities that may be affected by it
+		if(getClicked()){
+			affectedLocations = (List<ScreenPosition>) this.getProperty("affectedLocations"); 
+			for(ScreenPosition city: affectedLocations){
+				pg.line(x, y,city.x,city.y);
+			}
+		}
 	}
-
-
-	@Override
-	public void showConnectingLines(PGraphics pg, float x, float y) {
-		pg.fill(0);
-		System.out.println("want to draw a line");
-		pg.line(x, y,x+10,y+10);
-	}
-
-
-	@Override
-	public void dontShowConnectingLines(PGraphics pg, float x, float y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void showConnectingLinesFromCity(PGraphics pg, float x, float y, float x2, float y2) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

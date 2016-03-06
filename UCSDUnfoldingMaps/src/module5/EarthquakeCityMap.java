@@ -1,6 +1,7 @@
 package module5;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.fhpotsdam.unfolding.UnfoldingMap;
@@ -8,10 +9,10 @@ import de.fhpotsdam.unfolding.data.Feature;
 import de.fhpotsdam.unfolding.data.GeoJSONReader;
 import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.geo.Location;
+import de.fhpotsdam.unfolding.mapdisplay.AbstractMapDisplay;
 import de.fhpotsdam.unfolding.marker.AbstractShapeMarker;
 import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.marker.MultiMarker;
-import de.fhpotsdam.unfolding.marker.SimplePointMarker;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
 import de.fhpotsdam.unfolding.utils.MapUtils;
@@ -32,8 +33,6 @@ public class EarthquakeCityMap extends PApplet {
 	// You will use many of these variables, but the only one you should need to add
 	// code to modify is countryQuakes, where you will store the number of earthquakes
 	// per country.
-	
-	private SimplePointMarker threatCircleMarker;
 	
 	// To get rid of eclipse warnings
 	private static final long serialVersionUID = 1L;
@@ -65,9 +64,6 @@ public class EarthquakeCityMap extends PApplet {
 	// NEW IN MODULE 5
 	private CommonMarker lastSelected;
 	private CommonMarker lastClicked;
-	private CommonMarker connectedCities;
-	private CommonMarker connCity;
-	private CommonMarker connQuake;
 	
 	public void setup() {		
 		// (1) Initializing canvas and map tiles
@@ -93,9 +89,11 @@ public class EarthquakeCityMap extends PApplet {
 		List<Feature> cities = GeoJSONReader.loadData(this, cityFile);
 		cityMarkers = new ArrayList<Marker>();
 		for(Feature city : cities) {
-		  cityMarkers.add(new CityMarker(city));
+		  Marker newCity = new CityMarker(city);
+		  cityMarkers.add(newCity);
+		  cityHashMap.put(newCity, newCity.getLocation());
 		}
-	    
+	    		 
 		//     STEP 3: read in earthquake RSS feed
 	    List<PointFeature> earthquakes = ParseFeed.parseEarthquake(this, earthquakesURL);
 	    quakeMarkers = new ArrayList<Marker>();
@@ -104,28 +102,83 @@ public class EarthquakeCityMap extends PApplet {
 		  //check if LandQuake
 		  if(isLand(feature)) {
 		    quakeMarkers.add(new LandQuakeMarker(feature));
-		  }
-		  // OceanQuakes
-		  else {
-		    quakeMarkers.add(new OceanQuakeMarker(feature));
+		  } else {
+			  EarthquakeMarker oceanQuake = new OceanQuakeMarker(feature);
+			  oceanQ.add((OceanQuakeMarker) oceanQuake);
+
+			  List<Marker> affectedCities = new ArrayList<Marker>();
+			  
+//			  Find all cities that may be affected by this earthquake and add them to the "affectedCities"
+//			  property of the oceanQuake object
+			  
+			  double kmCircle= ((EarthquakeMarker)oceanQuake).threatCircle();
+			  for(Marker marker: cityMarkers){
+				  if(Math.abs(marker.getLocation().getDistance(oceanQuake.getLocation()))<=kmCircle){
+					  affectedCities.add(marker);
+				  }
+				}
+			  oceanQuake.setProperty("affectedCities", affectedCities);
+			  quakeMarkers.add(new OceanQuakeMarker(feature));
 		  }
 	    }
-
-	    // could be used for debugging
+	    
 	    printQuakes();
 	 		
 	    // (3) Add markers to map
 	    //     NOTE: Country markers are not added to the map.  They are used
 	    //           for their geometric properties
+	   
+		map.addMarkers(cityMarkers);
 	    map.addMarkers(quakeMarkers);
-	    map.addMarkers(cityMarkers);
 	    
 	}  // End setup
 	
 	
+//	We have to rewrite the x and y coordinates of the affected cities. We need to do this
+//	because the map may have been zoomed in, moved, etc. 
+	
+	private ScreenPosition getScreenPositionOfCity(Location location){
+		
+		ScreenPosition rawPosition = map.getScreenPosition(location);
+		
+		float rawX= rawPosition.x;
+		float rawY= rawPosition.y;
+		float rawZ = rawPosition.z;
+		
+		AbstractMapDisplay mapdisplay=map.mapDisplay;
+		
+		float mapOffsetX= mapdisplay.offsetX;
+		float mapOffsetY = mapdisplay.offsetY;
+		
+		rawPosition.set(rawX-mapOffsetX, rawY-mapOffsetY, rawZ);
+		return rawPosition;
+	}
+	
+//	Once an ocean earthquake is clicked, it will show lines to cities that may be affected by it.
+	
+	private void calculateLines(){
+		for(OceanQuakeMarker oceanQuake: oceanQ){
+			
+			List<ScreenPosition> affectedLocations = new ArrayList<ScreenPosition>();
+			List<Marker> affectedCities = (List<Marker>) oceanQuake.getProperty("affectedCities");
+			
+			for(Marker marker: affectedCities){
+				if(cityHashMap.get(marker) !=null){
+					Location location = cityHashMap.get(marker);
+					
+					ScreenPosition position = getScreenPositionOfCity(location);
+					affectedLocations.add(position);	
+				}
+			}
+			
+			oceanQuake.setProperty("affectedLocations", affectedLocations);
+		}
+	}
+	
 	public void draw() {
 		background(0);
 		map.draw();
+		calculateLines();
 		addKey();
 		
 	}
@@ -175,7 +228,6 @@ public class EarthquakeCityMap extends PApplet {
 			lastClicked.setClicked(false);
 			lastClicked= null;
 			unhideMarkers();
-			deleteThreatCircleMarker();
 		} else {
 			displayThreat(mouseX, mouseY);
 		}
@@ -207,25 +259,13 @@ public class EarthquakeCityMap extends PApplet {
 				hideMarker(marker);
 			} else {
 				displayMarker(marker);
-//				connCity=(CommonMarker) marker;
 
-				connCity=(CommonMarker) marker;
-				connCity.cityIsConnected(true);
-				connCity.setConnCity(map.getScreenPosition(new Location(marker.getLocation())));
-				
-				//get position
-			
-//				if(lastClicked.getClass().toString().contains("OceanQuakeMarker")){
-//					ScreenPosition position = map.getScreenPosition(new Location(marker.getLocation()));
-//					positions.add(position);
-//				}
+
+//				connCity=(CommonMarker) marker;
+//				connCity.cityIsConnected(true);
+//				connCity.setConnCity(map.getScreenPosition(new Location(marker.getLocation())));
 			}
 		}
-		System.out.println("adding");
-		connectedCities = (CommonMarker) cityMarkers.get(0);
-		connectedCities.addCoordinates(positions);
-		System.out.println("pos size"+ positions.size());
-		
 	}
 	
 	private void displayMarker(Marker marker){
@@ -245,9 +285,7 @@ public class EarthquakeCityMap extends PApplet {
 			if(!quakeMarkerSelected){
 				return;
 			} else{
-				connQuake=lastClicked;
-				connQuake.qs(true);
-				connQuake.setConnQuake(map.getScreenPosition(new Location(lastClicked.getLocation())));
+
 				//All cities within the threat circle of this earthquake are displayed; all other cities are hidden
 				double kmCircle= ((EarthquakeMarker) lastClicked).threatCircle();
 				displayCitiesWithinThreatCircle(kmCircle,lastClicked.getLocation());
@@ -273,10 +311,6 @@ public class EarthquakeCityMap extends PApplet {
 				displayMarker(quake);
 			}
 		}
-	}
-	
-	private void deleteThreatCircleMarker(){
-		threatCircleMarker=null;
 	}
 	
 	private void hideAllExceptOne(List<Marker> markerType, CommonMarker notHidden){
@@ -443,5 +477,7 @@ public class EarthquakeCityMap extends PApplet {
 	}
 	
 	List<ScreenPosition> positions = new ArrayList<ScreenPosition>();
+	List<OceanQuakeMarker> oceanQ = new ArrayList<OceanQuakeMarker>();
+	HashMap<Marker,Location> cityHashMap = new HashMap<Marker,Location>();
 
 }
