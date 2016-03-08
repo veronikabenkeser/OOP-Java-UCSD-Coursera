@@ -37,7 +37,5 @@ public class LandQuakeMarker extends EarthquakeMarker {
 	// Get the country the earthquake is in
 	public String getCountry() {
 		return (String) getProperty("country");
-	}
-
-		
+	}	
 }
