@@ -146,16 +146,16 @@ public abstract class EarthquakeMarker extends CommonMarker
 		
 		//Making sure that the label will fit within the window
 		if (850-x<pg.textWidth(title)){
-			System.out.println("less");
+			
 			if(x-pg.textWidth(title)>200){
-				x = x-pg.textWidth(title);
+				x = x-6-pg.textWidth(title);
 			} else{
 				x=210;
 			}
 		}
 		
-		if (800-y<15){
-			y = 785;
+		if (650-y<30){
+			y = 614;
 		} 
 		
 		pg.pushStyle();

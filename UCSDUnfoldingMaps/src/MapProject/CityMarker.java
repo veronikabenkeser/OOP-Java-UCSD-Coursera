@@ -41,14 +41,20 @@ public class CityMarker extends CommonMarker {
 	{
 		pg.clear();
 		
-		String name = getCity() + " " + getCountry() + " ";
+		String name = getCity() + ", " + getCountry() + " ";
 		String pop = "Pop: " + getPopulation() + " Million";
 		
 		if (850-x<pg.textWidth(name)){
-			x = x-pg.textWidth(name);
-		} 
-		if (800-y<29){
-			y = 771;
+			
+			if(x-pg.textWidth(name)>200){
+				x = x-6-pg.textWidth(name);
+			} else{
+				x=210;
+			}
+		}
+		
+		if (650-y<30){
+			y = 614;
 		} 
 		
 		pg.pushStyle();
