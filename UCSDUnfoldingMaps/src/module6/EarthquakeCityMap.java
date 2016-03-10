@@ -148,7 +148,7 @@ public class EarthquakeCityMap extends PApplet {
 		   }
 		   
 		   
-		   //Check type safety and use a wildcard to create a relationship between the Object class and the EarthquakeMarker class
+//		   Check type safety and use a wildcard to create a relationship between the Object class and the EarthquakeMarker class
 		   if(quakeMarkers.get(0) instanceof EarthquakeMarker){
 			   List<?> arr= quakeMarkers;
 			   List<EarthquakeMarker> quakeArr = (List<EarthquakeMarker>) arr;

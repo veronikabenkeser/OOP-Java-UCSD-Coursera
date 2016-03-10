@@ -227,7 +227,42 @@ public class ParseFeed {
 		
 	}
 	
+	//Make a hashMap mapping each country an array of 12 risk factors:
+	//arr[0] is males who smoke as a %of all adults
+	//arr[1] females who smoke as a % of all adults
+	//arr[2] incidence of tuberculosis per 100,000 ppl
+	//arr[3] diabetes prevalence as a % of population of adults 20 to 79
+	//arr[4] prevalence of HIV
+	//arr[5] women's share of population living with HIV
+	//arr[6] prevalence of HIV male
+	//arr[7] prevalence of HIV female
+	//arr[8] Antiretroviral therapy coverage (% of people living with HIV)
+	//arr[9] cause of death, by communicable diseases and maternal, prenatal and nutrition conditions
+	//arr[10] cause of death by non-communicable diseases
+	//arr[11] cause of death by by injury
 	
+//	public static void loadRiskFactorsFromCSV(PApplet p, String fileName){
+//		
+//		HashMap<String> hashM = new HashMap<String>();
+//		// get lines of csv file
+//		String[] rows = p.loadStrings(fileName);
+//		
+//		// Read rows
+//		for (String row : rows) {
+//			// split row by commas not in quotations
+//			String[] columns = row.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+//			String country = columns[2];
+//			String riskFactorName = columns[0];
+//			float percentageOfPopulation = findMostRecentData(columns);
+//			
+//			if(hashM.getKey(country) !=null){
+//				
+//			} else {
+//				
+//			}
+//		}
+//		
+//	}
 
 	/*
 	 * This method is to parse a file containing life expectancy information from
@@ -261,6 +296,7 @@ public class ParseFeed {
 			 * and store the year as the second value. (There are many other ways to do this)
 			 */
 			//
+			System.out.println("NUm of cols: "+columns.length);
 			for(int i = columns.length - 1; i > 3; i--) {
 				
 				// check if value exists for year
@@ -276,7 +312,16 @@ public class ParseFeed {
 
 		return lifeExpMap;
 	}
-	
-	
-
+	private float findMostRecentData(String[] columns){
+		for(int i = columns.length - 1; i > 3; i--) {
+			
+			// check if value exists for year
+			if(!columns[i].equals("..")) {
+				return Float.parseFloat(columns[i]);
+			}
+		}
+		return -1;
+	}
 }
+
+
