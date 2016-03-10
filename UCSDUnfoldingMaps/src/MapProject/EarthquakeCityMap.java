@@ -73,6 +73,8 @@ public class EarthquakeCityMap extends PApplet {
 	private int val = 0;
 	private int count = 0;
 	private List<EarthquakeMarker> currentlySortedArr;
+	private double currentInnerOffsetX=0;
+	private double currentInnerOffsetY=0;
 	
 	//create a buffer to draw boxes to
 	PGraphics buffer;
@@ -99,7 +101,7 @@ public class EarthquakeCityMap extends PApplet {
 //		earthquakesURL = "test2.atom";
 		
 		// Uncomment this line to take the quiz
-		//earthquakesURL = "quiz2.atom";
+//		earthquakesURL = "quiz2.atom";
 		
 		
 		// (2) Reading in earthquake data and geometric properties
@@ -201,7 +203,11 @@ public class EarthquakeCityMap extends PApplet {
 		map.draw();
 		buffer.endDraw();
 		image(buffer, 0, 0);
-		calculateLines();
+		if(currentInnerOffsetX != map.mapDisplay.innerOffsetX || currentInnerOffsetY != map.mapDisplay.innerOffsetY){
+			currentInnerOffsetX = map.mapDisplay.innerOffsetX ;
+			currentInnerOffsetY = map.mapDisplay.innerOffsetY;
+			calculateLines();
+		}
 		addKey();
 		buffer.clear();
 		  
