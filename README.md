@@ -1,6 +1,6 @@
 #Object Oriented Programming in Java
 
-###Course 1 out of 5 in Java Programming: Object-Oriented Design of Data Structures from University of California, San Diego
+###Course 1 out of 5 in Java Programming: Object-Oriented Design of Data Structures from University of California, San Diego offered through Coursera
 https://www.coursera.org/specializations/java-object-oriented
 
 ##About this Course
