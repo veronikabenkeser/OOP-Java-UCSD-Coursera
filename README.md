@@ -9,7 +9,7 @@ We’ll explore how to divide up a large project into a hierarchy of classes and
 In this course we want you to be inspired to create.  You’ll dive into a course project right away, with each lesson designed around concepts that are directly applicable to extending the project’s functionality.  
 
 ##Course Certificate: 
-
+https://www.coursera.org/account/accomplishments/certificate/JWYLSWUPY2DB
 
 ##View Project Details:
 http://veronikabenkeser.github.io/OOP-Java-UCSD-Coursera
